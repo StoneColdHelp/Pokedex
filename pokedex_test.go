@@ -5,7 +5,6 @@ import (
 )
 
 func TestCleanInput(t *testing.T) {
-	_ = cleanInput
 	cases := []struct {
 		input    string
 		expected []string
