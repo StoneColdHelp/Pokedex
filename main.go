@@ -172,8 +172,44 @@ func commandCatch(cfg *config, args ...string) error {
 	}
 
 	fmt.Printf("%s was caught!\n", pokemon.Name)
-
+	fmt.Println("Use inspect (pokemon_name)to take a look!")
+	fmt.Println("Use pokedex to view all caught Pokemon.")
 	cfg.caughtPokemon[pokemon.Name] = pokemon
+	return nil
+}
+
+// Inspect
+func commandInspect(cfg *config, args ...string) error {
+	if len(args) != 1 {
+		return errors.New("provide a pokemon name")
+	}
+
+	name := args[0]
+	pokemon, ok := cfg.caughtPokemon[name]
+	if !ok {
+		return errors.New("not caught")
+	}
+
+	fmt.Println("Name:", pokemon.Name)
+	fmt.Println("Height:", pokemon.Height)
+	fmt.Println("Weight:", pokemon.Weight)
+	fmt.Println("Stats:")
+	for _, stat := range pokemon.Stats {
+		fmt.Printf("  -%s: %v\n", stat.Stat.Name, stat.BaseStat)
+	}
+	fmt.Println("Types:")
+	for _, typeInfo := range pokemon.Types {
+		fmt.Println("  -", typeInfo.Type.Name)
+	}
+	return nil
+}
+
+// Inspect Pokedex
+func commandPokedex(cfg *config, args ...string) error {
+	fmt.Println("Your Pokedex:")
+	for _, p := range cfg.caughtPokemon {
+		fmt.Printf(" - %s\n", p.Name)
+	}
 	return nil
 }
 
@@ -208,6 +244,16 @@ func commandLookup() map[string]cliCommand {
 			name:        "catch <pokemon_name>",
 			description: "Attempt to catch a pokemon",
 			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect <pokemon_name>",
+			description: "View details about a caught Pokemon",
+			callback:    commandInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "See all caught Pokemon",
+			callback:    commandPokedex,
 		},
 	}
 }
